@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mileage App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f7f7f7; }
+        h1 { color: #2d3e50; }
+        form { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; max-width: 500px; margin-bottom: 30px; }
+        label { display: block; margin-top: 15px; }
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #bbb; border-radius: 4px;
+        }
+        button { margin-top: 20px; padding: 10px 20px; background: #0078d4; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background: #e6f0fa; }
+    </style>
+</head>
+<body>
+    <h1>Mileage App</h1>
+    <form id="mileageForm">
+        <label for="rcNumber">Vehicle RC Number</label>
+        <input type="text" id="rcNumber" name="rcNumber" required>
+
+        <label for="dateIn">Date - Petrol IN</label>
+        <input type="date" id="dateIn" name="dateIn" required>
+
+        <label for="odoIn">Odometer Reading (Petrol IN)</label>
+        <input type="number" id="odoIn" name="odoIn" required min="0">
+
+        <label for="liters">Liters of Petrol</label>
+        <input type="number" id="liters" name="liters" step="0.01" required min="0">
+
+        <label for="dateReserve">Date - Reserve</label>
+        <input type="date" id="dateReserve" name="dateReserve" required>
+
+        <label for="odoReserve">Odometer Reading (Reserve)</label>
+        <input type="number" id="odoReserve" name="odoReserve" required min="0">
+
+        <button type="submit">Add Record</button>
+    </form>
+
+    <table id="recordsTable">
+        <thead>
+            <tr>
+                <th>Vehicle RC Number</th>
+                <th>Date - Petrol IN</th>
+                <th>Odometer IN</th>
+                <th>Liters</th>
+                <th>Date - Reserve</th>
+                <th>Odometer Reserve</th>
+                <th>Distance Run</th>
+                <th>Mileage (km/l)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Records will appear here -->
+        </tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('mileageForm');
+        const tableBody = document.querySelector('#recordsTable tbody');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const rcNumber = form.rcNumber.value.trim();
+            const dateIn = form.dateIn.value;
+            const odoIn = parseFloat(form.odoIn.value);
+            const liters = parseFloat(form.liters.value);
+            const dateReserve = form.dateReserve.value;
+            const odoReserve = parseFloat(form.odoReserve.value);
+
+            if (odoReserve <= odoIn) {
+                alert('Reserve odometer reading must be greater than Petrol IN reading.');
+                return;
+            }
+            if (liters <= 0) {
+                alert('Liters of petrol must be greater than 0.');
+                return;
+            }
+
+            const distanceRun = odoReserve - odoIn;
+            const mileage = (distanceRun / liters).toFixed(2);
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${rcNumber}</td>
+                <td>${dateIn}</td>
+                <td>${odoIn}</td>
+                <td>${liters}</td>
+                <td>${dateReserve}</td>
+                <td>${odoReserve}</td>
+                <td>${distanceRun}</td>
+                <td>${mileage}</td>
+            `;
+            tableBody.appendChild(row);
+
+            form.reset();
+        });
+    </script>
+</body>
+</html>
